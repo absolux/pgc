@@ -2,22 +2,35 @@
 import { Duplex } from 'stream'
 import { EventEmitter } from 'events'
 
-export interface Client {
-  constructor (options: ClientOptions): Client
+export function createClient (options: ClientOptions): Client
 
-  connect (options: ConnectionOptions): Connection
-}
-
+/**
+ * @see https://www.postgresql.org/docs/9.6/runtime-config-client.html
+ */
 export interface ClientOptions {
   user: string
   database?: string
+  TimeZone?: string
+  DateStyle?: string
+  IntervalStyle?: string
   client_encoding?: string
+  application_name?: string
+  statement_timeout?: number
+  integer_datetimes?: boolean
+  standard_conforming_strings?: boolean
+
+  [key: string]: any
+}
+
+export interface Client {
+  connect (options: ConnectionOptions): Connection
 }
 
 export interface ConnectionOptions {
   port: number
   host: string
   keepAlive?: boolean
+  // ssl?: any
 }
 
 export interface Connection extends EventEmitter {
@@ -37,14 +50,8 @@ export interface Connection extends EventEmitter {
   once (event: 'connect'): this
   on (event:  'connect'): this
 
-  prepare (query: string, options?: PrepareOptions): ExtendedStatement
-  execute (query: string): SimpleStatement
+  execute (query: string, params?: Param[]): Statement
   close (): void
-}
-
-export interface PrepareOptions {
-  portal?: string
-  name: string
 }
 
 export interface ConnectionError extends Error {
@@ -76,26 +83,25 @@ export interface Statement extends EventEmitter {
   on (event: 'error', fn: (error: ConnectionError | StatementError) => any): this
   emit (event: 'error', error: ConnectionError | StatementError): boolean
 
+  once (event = 'warning', fn: (msg: ErrorResponse) => any): this
+  on (event = 'warning', fn: (msg: ErrorResponse) => any): this
+  emit (event: 'warning', msg: ErrorResponse): boolean
+
   once (event: 'fields', fn: (fields: Field[]) => any): this
   on (event: 'fields', fn: (fields: Field[]) => any): this
   emit (event: 'fields', fields: Field[]): boolean
+
+  once (event = 'complete', fn: (obj: Info) => any): this
+  on (event = 'complete', fn: (obj: Info) => any): this
+  emit (event: 'complete', obj: Info): boolean
 
   once (event = 'row', fn: (row: Value[]) => any): this
   on (event = 'row', fn: (row: Value[]) => any): this
   emit (event: 'row', row: Value[]): boolean
 
-  once (event = 'end', fn: (obj: Info) => any): this
-  on (event = 'end', fn: (obj: Info) => any): this
-  emit (event: 'end', obj: Info): boolean
-}
-
-export interface SimpleStatement extends Statement {
-  // execute (query: string): this
-}
-
-export interface ExtendedStatement extends Statement {
-  execute (values: Value[]): this
-  destroy (): void
+  once (event = 'end'): this
+  on (event = 'end'): this
+  emit (event: 'end'): boolean
 }
 
 export interface StatementError extends Error {
@@ -107,7 +113,6 @@ export type Param = null | string | Buffer
 export type Value = null | Buffer
 
 export interface Field {
-  // format: 'text' | 'binary'
   isBinary?: boolean
   modifier: number
   columnID: number
