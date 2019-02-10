@@ -83,24 +83,24 @@ export interface Statement extends EventEmitter {
   on (event: 'error', fn: (error: ConnectionError | StatementError) => any): this
   emit (event: 'error', error: ConnectionError | StatementError): boolean
 
-  once (event = 'warning', fn: (msg: ErrorResponse) => any): this
-  on (event = 'warning', fn: (msg: ErrorResponse) => any): this
+  once (event: 'warning', fn: (msg: ErrorResponse) => any): this
+  on (event: 'warning', fn: (msg: ErrorResponse) => any): this
   emit (event: 'warning', msg: ErrorResponse): boolean
 
   once (event: 'fields', fn: (fields: Field[]) => any): this
   on (event: 'fields', fn: (fields: Field[]) => any): this
   emit (event: 'fields', fields: Field[]): boolean
 
-  once (event = 'complete', fn: (obj: Info) => any): this
-  on (event = 'complete', fn: (obj: Info) => any): this
+  once (event: 'complete', fn: (obj: Info) => any): this
+  on (event: 'complete', fn: (obj: Info) => any): this
   emit (event: 'complete', obj: Info): boolean
 
-  once (event = 'row', fn: (row: Value[]) => any): this
-  on (event = 'row', fn: (row: Value[]) => any): this
+  once (event: 'row', fn: (row: Value[]) => any): this
+  on (event: 'row', fn: (row: Value[]) => any): this
   emit (event: 'row', row: Value[]): boolean
 
-  once (event = 'end'): this
-  on (event = 'end'): this
+  once (event: 'end'): this
+  on (event: 'end'): this
   emit (event: 'end'): boolean
 }
 
