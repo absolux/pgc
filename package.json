@@ -1,30 +1,36 @@
 {
   "name": "pgc",
   "version": "1.0.0",
-  "description": "",
+  "description": "A low level PostgreSQL client",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "engines": {
     "node": ">=8",
     "npm": ">=5"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "npm run build && node build",
-    "test": "mocha -r ts-node/register \"test/**/*.ts\""
+    "test": "node test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://absolux@bitbucket.org/absolux/pgc.git"
+    "url": "git+https://github.com/absolux/pgc.git"
   },
-  "keywords": [],
+  "keywords": [
+    "pg",
+    "pgc",
+    "client",
+    "postgre",
+    "low level",
+    "postgres",
+    "postgresql"
+  ],
   "author": "absolux",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/absolux/pgc#readme",
+  "license": "MIT",
+  "homepage": "https://github.com/absolux/pgc#readme",
+  "dependencies": {
+    "@types/node": "^8.10.40"
+  },
   "devDependencies": {
-    "@types/mocha": "^2.2.48",
-    "@types/node": "^8.10.36",
-    "mocha": "^5.2.0",
-    "ts-node": "^4.1.0",
-    "typescript": "^3.1.5"
+    "mocha": "^5.2.0"
   }
 }
