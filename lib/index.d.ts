@@ -1,6 +1,9 @@
 
-import { Duplex } from 'stream'
+/// <reference types="node" />
+
 import { EventEmitter } from 'events'
+import { ConnectionOptions as TlsConnectOpts } from 'tls'
+import { TcpNetConnectOpts, IpcNetConnectOpts } from 'net'
 
 export function createClient (options: ClientOptions): Client
 
@@ -26,11 +29,9 @@ export interface Client {
   connect (options: ConnectionOptions): Connection
 }
 
-export interface ConnectionOptions {
-  port: number
-  host: string
+export interface ConnectionOptions extends TcpNetConnectOpts, IpcNetConnectOpts, TlsConnectOpts {
+  secure?: boolean
   keepAlive?: boolean
-  // ssl?: any
 }
 
 export interface Connection extends EventEmitter {
