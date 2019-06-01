@@ -2,8 +2,8 @@
 /// <reference types="node" />
 
 import { EventEmitter } from 'events'
-import { ConnectionOptions as TlsConnectOpts } from 'tls'
-import { TcpNetConnectOpts, IpcNetConnectOpts } from 'net'
+import { SecureContextOptions } from 'tls'
+import { TcpSocketConnectOpts, IpcSocketConnectOpts } from 'net'
 
 export function createClient (options: ClientOptions): Client
 
@@ -26,12 +26,16 @@ export interface ClientOptions {
 }
 
 export interface Client {
-  connect (options: ConnectionOptions): Connection
+  connect (options: ConnectionOptions | SecureConnectionOptions): Connection
 }
 
-export interface ConnectionOptions extends TcpNetConnectOpts, IpcNetConnectOpts, TlsConnectOpts {
-  secure?: boolean
+export interface ConnectionOptions extends TcpSocketConnectOpts, IpcSocketConnectOpts {
   keepAlive?: boolean
+}
+
+export interface SecureConnectionOptions extends ConnectionOptions, SecureContextOptions {
+  secure: true
+  rejectUnauthorized?: boolean
 }
 
 export interface Connection extends EventEmitter {
