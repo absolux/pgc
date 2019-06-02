@@ -12,13 +12,10 @@ export function createClient (options: ClientOptions): Client
  */
 export interface ClientOptions {
   user: string
+  password?: string
   database?: string
-  TimeZone?: string
-  DateStyle?: string
-  IntervalStyle?: string
   client_encoding?: string
   application_name?: string
-  statement_timeout?: number
   integer_datetimes?: boolean
   standard_conforming_strings?: boolean
 
