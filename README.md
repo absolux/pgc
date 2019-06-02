@@ -43,6 +43,7 @@ connection.on('ready', () => {
   statement.on('error', console.error)
   statement.on('row', (row) => console.log(row))
   statement.on('fields', (fields) => console.log(fields))
+  statement.on('end', () => console.log('statement finished'))
   statement.on('complete', ({ rowCount }) => console.log(rowCount))
 })
 ```
@@ -56,6 +57,7 @@ connection.on('ready', () => {
   statement.on('error', console.error)
   statement.on('row', (row) => console.log(row))
   statement.on('fields', (fields) => console.log(fields))
+  statement.on('end', () => console.log('statement finished'))
   statement.on('complete', ({ rowCount }) => console.log(rowCount))
 })
 ```
