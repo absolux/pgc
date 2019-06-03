@@ -44,13 +44,13 @@ export interface Connection extends EventEmitter {
   on (event: 'close', fn: (hadError: boolean) => any): this
   emit (event: 'close', hadError: boolean): boolean
 
+  once (event: 'ready', fn: () => any): this
+  on (event:  'ready', fn: () => any): this
   emit (event: 'ready'): boolean
-  once (event: 'ready'): this
-  on (event:  'ready'): this
 
+  once (event: 'connect', fn: () => any): this
+  on (event:  'connect', fn: () => any): this
   emit (event: 'connect'): boolean
-  once (event: 'connect'): this
-  on (event:  'connect'): this
 
   execute (query: string, params?: Param[]): Statement
   close (): void
@@ -85,9 +85,9 @@ export interface Statement extends EventEmitter {
   on (event: 'error', fn: (error: ConnectionError | StatementError) => any): this
   emit (event: 'error', error: ConnectionError | StatementError): boolean
 
-  once (event: 'warning', fn: (msg: ErrorResponse) => any): this
-  on (event: 'warning', fn: (msg: ErrorResponse) => any): this
-  emit (event: 'warning', msg: ErrorResponse): boolean
+  once (event: 'notice', fn: (msg: ErrorResponse) => any): this
+  on (event: 'notice', fn: (msg: ErrorResponse) => any): this
+  emit (event: 'notice', msg: ErrorResponse): boolean
 
   once (event: 'fields', fn: (fields: Field[]) => any): this
   on (event: 'fields', fn: (fields: Field[]) => any): this
@@ -101,8 +101,8 @@ export interface Statement extends EventEmitter {
   on (event: 'row', fn: (row: Value[]) => any): this
   emit (event: 'row', row: Value[]): boolean
 
-  once (event: 'end'): this
-  on (event: 'end'): this
+  once (event: 'end', fn: () => any): this
+  on (event: 'end', fn: () => any): this
   emit (event: 'end'): boolean
 }
 
