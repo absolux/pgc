@@ -1,27 +1,27 @@
 
-[WIP] A low level PostgreSQL client.
+[WIP] A low level PostgreSQL client that handles only the communication with the server.
 
 ## Client
 
 ```js
-let options = {
+let database_options = {
   user: 'username'
   database: 'dbname'
   password: 'topsecret'
 }
 
-let client = new Client(options)
+let client = new Client(database_options)
 ```
 
 ## Connection
 
 ```js
-let options = {
+let connection_options = {
   host: 'localhost',
   port: 5432
 }
 
-let connection = client.connect(options)
+let connection = client.connect(connection_options)
 
 connection.on('error', console.error)
 
@@ -34,32 +34,54 @@ connection.on('connect', () => {
 connection.on('close', () => console.log('closed'))
 ```
 
-## Simple Statement
+## Simple statement
+
+During the statement execution, the connection is locked, and will reject any other execution until it's `ready`.
 
 ```js
 connection.on('ready', () => {
-  let statement = connection.execute('SELECT 1 AS one')
+  let statement = connection.execute('SELECT 1 one')
 
-  statement.on('error', console.error)
-  statement.on('row', (row) => console.log(row))
-  statement.on('fields', (fields) => console.log(fields))
-  statement.on('end', () => console.log('statement finished'))
-  statement.on('complete', ({ rowCount }) => console.log(rowCount))
+  statement.on('error', console.error) // triggered only when errors occur
+  statement.on('fields', console.log) // prints: [{ name: 'one', ... }]
+  statement.on('row', console.log) // prints: [Buffer]
+  statement.on('complete', console.log) // prints: { rowCount: 1, command: 'SELECT' }
+  statement.on('end', () => console.log('statement finished and connection unlocked'))
 })
 ```
 
-## Parametrized Statement
+## Parametrized statement
 
 ```js
 connection.on('ready', () => {
   let statement = connection.execute('SELECT $1 one, $2 two', [ 1, 2 ])
 
   statement.on('error', console.error)
-  statement.on('row', (row) => console.log(row))
-  statement.on('fields', (fields) => console.log(fields))
-  statement.on('end', () => console.log('statement finished'))
-  statement.on('complete', ({ rowCount }) => console.log(rowCount))
+  statement.on('fields', console.log) // prints: [{ name: 'one', ... }, { name: 'two', ... }]
+  statement.on('row', console.log) // prints: [Buffer, Buffer]
+  statement.on('complete', console.log) // prints: { rowCount: 1, command: 'SELECT' }
+  statement.on('end', () => console.log('statement finished and connection unlocked'))
 })
 ```
 
-During the statement execution, the connection is locked, and will reject new statements be executed, until it's ready.
+## Multiple statements
+
+```js
+connection.on('ready', () => {
+  let statement = connection.execute('SELECT 1 one; SELECT 2 two;')
+
+  statement.on('error', console.error)
+
+  // first query
+  statement.on('fields', console.log) // prints: [{ name: 'one', ... }]
+  statement.on('row', console.log) // prints: [Buffer]
+  statement.on('complete', console.log) // prints: { rowCount: 1, command: 'SELECT' }
+
+  // second query
+  statement.on('fields', console.log) // prints: [{ name: 'two', ... }]
+  statement.on('row', console.log) // prints: [Buffer]
+  statement.on('complete', console.log) // prints: { rowCount: 1, command: 'SELECT' }
+
+  statement.on('end', () => console.log('statement finished and connection unlocked'))
+})
+```
