@@ -36,13 +36,13 @@ connection.on('close', () => console.log('closed'))
 
 ## Simple statement
 
-During the statement execution, the connection is locked, and will reject any other execution until it's `ready`.
+During the statement execution, the connection is locked, and will reject any other execution until it becomes `ready`.
 
 ```js
 connection.on('ready', () => {
   let statement = connection.execute('SELECT 1 one')
 
-  statement.on('error', console.error) // triggered only when errors occur
+  statement.on('error', console.error) // triggered only when an error occurs during query processing
   statement.on('fields', console.log) // prints: [{ name: 'one', ... }]
   statement.on('row', console.log) // prints: [Buffer]
   statement.on('complete', console.log) // prints: { rowCount: 1, command: 'SELECT' }
