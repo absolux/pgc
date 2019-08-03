@@ -13,7 +13,7 @@ export class Statement extends AsyncEmitter {
     this._stream.cancel()
   }
 
-  _watch (protocol) {
+  _watch (stream) {
     const onComplete = ({ command, rowCount }) => {
       this.emit('complete', { command, rowCount })
     }
@@ -36,24 +36,24 @@ export class Statement extends AsyncEmitter {
       this.emit('error', new Error(msg))
     }
 
-    protocol.on('PG:Error', onError)
-    protocol.on('PG:DataRow', onRow)
-    protocol.on('PG:Notice', onNotice)
-    protocol.on('end', onConnectionEnd)
-    protocol.on('error', onConnectionError)
-    protocol.on('PG:EmptyQuery', onEmptyQuery)
-    protocol.on('PG:RowDescription', onFields)
-    protocol.on('PG:CommandComplete', onComplete)
+    stream.on('PG:Error', onError)
+    stream.on('PG:DataRow', onRow)
+    stream.on('PG:Notice', onNotice)
+    stream.on('end', onConnectionEnd)
+    stream.on('error', onConnectionError)
+    stream.on('PG:EmptyQuery', onEmptyQuery)
+    stream.on('PG:RowDescription', onFields)
+    stream.on('PG:CommandComplete', onComplete)
 
-    protocol.once('PG:ReadyForQuery', () => {
-      protocol.off('PG:CommandComplete', onComplete)
-      protocol.off('PG:RowDescription', onFields)
-      protocol.off('PG:EmptyQuery', onEmptyQuery)
-      protocol.off('error', onConnectionError)
-      protocol.off('end', onConnectionEnd)
-      protocol.off('PG:Notice', onNotice)
-      protocol.off('PG:DataRow', onRow)
-      protocol.off('PG:Error', onError)
+    stream.once('PG:ReadyForQuery', () => {
+      stream.off('PG:CommandComplete', onComplete)
+      stream.off('PG:RowDescription', onFields)
+      stream.off('PG:EmptyQuery', onEmptyQuery)
+      stream.off('error', onConnectionError)
+      stream.off('end', onConnectionEnd)
+      stream.off('PG:Notice', onNotice)
+      stream.off('PG:DataRow', onRow)
+      stream.off('PG:Error', onError)
 
       // finish
       this.emit('end')
