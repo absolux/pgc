@@ -1,10 +1,9 @@
 
-'use strict'
-
 const START_POSITION    = 0
 const LENGTH_SIZE       = 4
 
-class MessageWriter {
+
+export class MessageWriter {
   /**
    * 
    * @param {string} [encoding] text encoding
@@ -112,7 +111,7 @@ class MessageWriter {
 
       if (Buffer.isBuffer(value)) {
         this._writeInt32(value.length)
-        this._append(value)
+        this._writeBytes(value)
       }
       else {
         this._writeInt32(Buffer.byteLength(value))
@@ -268,9 +267,4 @@ class MessageWriter {
     this._offset += buffer.length
     return this
   }
-}
-
-// export
-module.exports = {
-  MessageWriter
 }

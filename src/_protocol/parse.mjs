@@ -1,14 +1,12 @@
 
-'use strict'
-
-const { BufferReader } = require('./buffer-reader')
-
+import { BufferReader } from '../_util/buffer-reader'
 
 const ERROR_FIELDS = {
   'p': 'internalPosition',
   'q': 'internalQuery',
   'n': 'constraint',
   'S': 'severity',
+  'V': 'severity',
   'P': 'position',
   'd': 'dataType',
   'M': 'message',
@@ -22,6 +20,24 @@ const ERROR_FIELDS = {
   'L': 'line',
   'C': 'code',
   'H': 'hint',
+}
+
+const parsers = {
+  [0x6e]: _parseNoData,
+  [0x44]: _parseDataRow,
+  [0x32]: _parseBindComplete,
+  [0x31]: _parseParseComplete,
+  [0x33]: _parseCloseComplete,
+  [0x5a]: _parseReadyForQuery,
+  [0x45]: _parseErrorResponse,
+  [0x52]: _parseAuthentication,
+  [0x4b]: _parseBackendKeyData,
+  [0x4e]: _parseNoticeResponse,
+  [0x54]: _parseRowDescription,
+  [0x53]: _parseParameterStatus,
+  [0x43]: _parseCommandComplete,
+  [0x73]: _parsePortalSuspended,
+  [0x49]: _parseEmptyQueryResponse,
 }
 
 function _parseNoData () {
@@ -57,7 +73,7 @@ function _parseErrorOrNotice (buffer, type) {
   let message = { type }
   let key
 
-  while ((key = reader.readString(1)) !== '\0') {
+  while ((key = reader.readString(1)) !== '\0') {console.log(key)
     message[ERROR_FIELDS[key]] = reader.readCString()
   }
 
@@ -160,21 +176,8 @@ function _parseAuthentication (buffer) {
   return message
 }
 
-// export
-module.exports = {
-  [0x6e]: _parseNoData,
-  [0x44]: _parseDataRow,
-  [0x32]: _parseBindComplete,
-  [0x31]: _parseParseComplete,
-  [0x33]: _parseCloseComplete,
-  [0x5a]: _parseReadyForQuery,
-  [0x45]: _parseErrorResponse,
-  [0x52]: _parseAuthentication,
-  [0x4b]: _parseBackendKeyData,
-  [0x4e]: _parseNoticeResponse,
-  [0x54]: _parseRowDescription,
-  [0x53]: _parseParameterStatus,
-  [0x43]: _parseCommandComplete,
-  [0x73]: _parsePortalSuspended,
-  [0x49]: _parseEmptyQueryResponse,
+export function parse ({ code, body }) {
+  let parseFn = parsers[code]
+
+  if (parseFn) return parseFn(body)
 }

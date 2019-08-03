@@ -1,7 +1,5 @@
 
-'use strict'
-
-class BufferReader {
+export class BufferReader {
 	/**
 	 * 
 	 * @param {Buffer} source 
@@ -56,9 +54,4 @@ class BufferReader {
 
 		return this._buffer.toString(encoding, this._offset, (this._offset = end) - 1)
 	}
-}
-
-// export
-module.exports = {
-	BufferReader
 }

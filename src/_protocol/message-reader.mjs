@@ -1,12 +1,13 @@
 
-'use strict'
-
 const CODE_SIZE = 1
 const LENGTH_SIZE = 4
 const HEADER_SIZE = 5
 
 
-class MessageReader {
+export class MessageReader {
+  /**
+   * 
+   */
   constructor () {
     this._buffer = Buffer.alloc(0)
     this._offset = 0
@@ -24,7 +25,7 @@ class MessageReader {
     if (! remaining) {
       this._buffer = chunk
       this._offset = 0
-      return this
+      return
     }
 
     let oldBuffer = this._buffer
@@ -33,8 +34,6 @@ class MessageReader {
     oldBuffer.copy(this._buffer, 0, this._offset)
     chunk.copy(this._buffer, remaining)
     this._offset = 0
-
-    return this
   }
 
   /**
@@ -84,9 +83,4 @@ class MessageReader {
   _readBody (size) {
     return this._buffer.slice(this._offset += LENGTH_SIZE, this._offset += size)
   }
-}
-
-// export
-module.exports = {
-  MessageReader
 }

@@ -1,13 +1,12 @@
 
-'use strict'
+import events from 'events'
 
-const { EventEmitter } = require("events")
-const { setImmediate } = require("timers")
 
 const { isArray } = Array
+const { EventEmitter } = events
 
 
-class AsyncEmitter extends EventEmitter {
+export class AsyncEmitter extends EventEmitter {
 	/**
 	 * Asynchonously invoke the listeners
 	 *
@@ -53,9 +52,4 @@ class AsyncEmitter extends EventEmitter {
 
 		return []
 	}
-}
-
-// export
-module.exports = {
-	AsyncEmitter
 }
