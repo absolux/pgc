@@ -11,16 +11,15 @@ export class Pool {
   }
 
   acquire () {
-    let request = this._enqueue()
+    setImmediate(() => this._dequeue())
 
-    this._dequeue()
-
-    return request.promise()
+    return this._enqueue().promise()
   }
 
   release (resource) {
+    setImmediate(() => this._dequeue())
+
     this._resources.push(resource)
-    this._dequeue()
   }
 
   _enqueue () {
