@@ -6,38 +6,36 @@ import { Queue } from './queue'
 export class Manager {
   /**
    * 
-   * @param {{ size?: number, factory: () => Any }} options 
+   * @param {{ size?: number, factory: () => any }} options 
    */
   constructor ({ factory, size = 10 }) {
-    this._resources = new Array(size)
-    this._available = new Queue()
-    this._factory = factory
-    this._size = size
-    this._offset = 0
+    this.available = new Queue()
+    this.factory = factory
+    this.resources = []
+    this.max = size
   }
 
   shift () {
-    return this._available.shift() || this._create()
+    return this.available.shift() || this.create()
   }
 
   push (resource) {
-    this._available.push(resource)
+    this.available.push(resource)
   }
 
   drop (resource) {
-    let index = this._resources.indexOf(resource)
+    let index = this.resources.indexOf(resource)
 
-    if (index >= 0) {
-      this._resources.splice(index, 1)
-      this._offset--
-    }
+    if (~index) this.resources.splice(index, 1)
   }
 
-  _create () {
-    if (this._offset >= this._size) return
+  create () {
+    if (this.available.length >= this.max) return
 
-    let resource = this._factory.call(null)
+    let resource = this.factory.call(null)
 
-    return this._resources[this._offset++] = resource
+    this.resources.push(resource)
+    
+    return resource
   }
 }
