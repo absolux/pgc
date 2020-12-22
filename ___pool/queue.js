@@ -29,10 +29,8 @@ export class Queue {
   each (fn) {
     let node = this._head
 
-    while (node) {
-      fn.call(null, node)
-      node = node.next
-    }
+    do fn.call(null, node)
+    while (node = node.next)
   }
 }
 
