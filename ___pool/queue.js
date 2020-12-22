@@ -3,7 +3,7 @@
 
 export class Queue {
   constructor () {
-    this._head = null
+    this._head = this._tail = null
   }
 
   isEmpty () {
@@ -11,9 +11,9 @@ export class Queue {
   }
 
   push (value) {
-    let node = _createNode(value, this._head)
+    this._tail = _createNode(value, this._tail)
 
-    if (! this._head) this._head = node
+    if (! this._head) this._head = this._tail
   }
 
   shift () {
