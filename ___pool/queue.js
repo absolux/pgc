@@ -3,38 +3,38 @@
 
 export class Queue {
   constructor () {
-    this._head = this._tail = null
+    this.head = this.tail = null
   }
 
   isEmpty () {
-    return this._head == null
+    return this.head == null
   }
 
   push (value) {
-    this._tail = _createNode(value, this._tail)
+    this.tail = createNode(value, this.tail)
 
-    if (! this._head) this._head = this._tail
+    if (! this.head) this.head = this.tail
   }
 
   shift () {
-    if (! this._head) return
+    if (! this.head) return
 
-    let node = this._head
+    let node = this.head
 
-    this._head = node.next
+    this.head = node.next
 
     return node.value
   }
 
   each (fn) {
-    let node = this._head
+    let node = this.head
 
     do fn.call(null, node)
     while (node = node.next)
   }
 }
 
-function _createNode (value, previous) {
+function createNode (value, previous) {
   if (! previous) return { value }
 
   return previous.next = { value }
