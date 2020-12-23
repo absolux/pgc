@@ -6,37 +6,37 @@ import { Request } from './request'
 
 export class Pool {
   constructor (manager) {
-    this._requests = new Queue()
-    this._resources = manager
+    this.resources = manager
+    this.requests = new Queue()
   }
 
   acquire () {
-    setImmediate(() => this._dequeue())
+    setImmediate(() => this.dequeue())
 
-    return this._enqueue().promise()
+    return this.enqueue().promise()
   }
 
   release (resource) {
-    setImmediate(() => this._dequeue())
+    setImmediate(() => this.dequeue())
 
-    this._resources.push(resource)
+    this.resources.push(resource)
   }
 
-  _enqueue () {
+  enqueue () {
     let request = new Request()
 
-    this._requests.push(request)
+    this.requests.push(request)
 
     return request
   }
 
-  _dequeue () {
-    if (this._requests.isEmpty()) return
+  dequeue () {
+    if (this.requests.isEmpty()) return
 
-    let resource = this._resources.shift()
+    let resource = this.resources.shift()
 
     if (resource) {
-      let request = this._requests.shift()
+      let request = this.requests.shift()
 
       request.resolve(resource)
     }
