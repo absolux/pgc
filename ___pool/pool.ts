@@ -1,28 +1,27 @@
 
-'use strict'
-
 import { Queue } from './queue'
 import { Request } from './request'
+import { Manager } from './resources'
 
-export class Pool {
-  constructor (manager) {
-    this.resources = manager
-    this.requests = new Queue()
+export class Pool<T> {
+  private requests = new Queue<T>()
+
+  constructor (private resources: Manager<T>) {
   }
 
-  acquire () {
+  acquire (): Promise<T> {
     setImmediate(() => this.dequeue())
 
     return this.enqueue().promise()
   }
 
-  release (resource) {
+  release (resource: T): void {
     setImmediate(() => this.dequeue())
 
     this.resources.push(resource)
   }
 
-  enqueue () {
+  private enqueue (): Request<T> {
     let request = new Request()
 
     this.requests.push(request)
@@ -30,7 +29,7 @@ export class Pool {
     return request
   }
 
-  dequeue () {
+  private dequeue (): void {
     if (this.requests.isEmpty()) return
 
     let resource = this.resources.shift()
