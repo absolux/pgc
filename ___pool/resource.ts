@@ -1,35 +1,30 @@
 
-'use strict'
-
 import { Queue } from './queue'
 
-export class Manager {
-  /**
-   * @param {{ create: () => any }} factory 
-   * @param {{ size?: number }} options 
-   */
-  constructor (factory, { size = 10 }) {
-    this.available = new Queue()
-    this.factory = factory
-    this.resources = []
+export class Manager<T> {
+  private max: number
+  private resources = []
+  private available = new Queue()
+
+  constructor (private factory: Factory<T>, { size = 10 }) {
     this.max = size
   }
 
-  shift () {
+  shift (): T | undefined {
     return this.available.shift() || this.create()
   }
 
-  push (resource) {
+  push (resource: T): void {
     this.available.push(resource)
   }
 
-  drop (resource) {
+  drop (resource): void {
     let index = this.resources.indexOf(resource)
 
     if (~index) this.resources.splice(index, 1)
   }
 
-  create () {
+  private create (): T | undefined {
     if (this.available.length >= this.max) return
 
     let resource = this.factory.create()
@@ -38,4 +33,8 @@ export class Manager {
     
     return resource
   }
+}
+
+export interface Factory<T> {
+  create (): T
 }
