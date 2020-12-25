@@ -7,8 +7,8 @@ import { Manager } from './resource'
 /**
  * Create a new resource pool
  * 
- * @param {{ size?: number, factory: () => any }} options 
+ * @param {{ factory: { create: () => any }, size?: number }} options 
  */
-export function createPool (options) {
-  return new Pool(new Manager(options))
+export function createPool ({ factory, ...options }) {
+  return new Pool(new Manager(factory, options))
 }
