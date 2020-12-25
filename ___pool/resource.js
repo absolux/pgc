@@ -5,10 +5,10 @@ import { Queue } from './queue'
 
 export class Manager {
   /**
-   * 
-   * @param {{ size?: number, factory: () => any }} options 
+   * @param {{ create: () => any }} factory 
+   * @param {{ size?: number }} options 
    */
-  constructor ({ factory, size = 10 }) {
+  constructor (factory, { size = 10 }) {
     this.available = new Queue()
     this.factory = factory
     this.resources = []
@@ -32,7 +32,7 @@ export class Manager {
   create () {
     if (this.available.length >= this.max) return
 
-    let resource = this.factory.call(null)
+    let resource = this.factory.create()
 
     this.resources.push(resource)
     
