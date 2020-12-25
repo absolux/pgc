@@ -1,7 +1,7 @@
 
 import { Queue } from './queue'
 import { Request } from './request'
-import { Manager } from './resources'
+import { Manager } from './resource'
 
 export class Pool<T> {
   private requests = new Queue<T>()
